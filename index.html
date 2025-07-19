@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>강화 재연소 촉매 계산기</title>
+  <style>
+    .calculator {
+      font-family: "Segoe UI", sans-serif;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 20px 30px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      margin-left: 20px;
+      text-align: left;
+    }
+
+    .calculator h2 {
+      margin-bottom: 20px;
+    }
+
+    .calculator label {
+      display: block;
+      margin-bottom: 15px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .calculator input {
+      width: 100%;
+      padding: 6px 10px;
+      font-size: 14px;
+      box-sizing: border-box;
+      margin-top: 5px;
+      border: 1px solid #bbb;
+      border-radius: 5px;
+      background-color: #fafafa;
+    }
+
+    .calculator #result {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 16px;
+      color: #222;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="calculator">
+    <h2>강화 재연소 촉매 계산기</h2>
+
+    <label>
+      룬 파편 가격 (10개당, 원): 
+      <input id="runePrice" type="number" value="300">
+    </label>
+
+    <label>
+      촉매 1개 가격 (원): 
+      <input id="catalystPrice" type="number" value="1380">
+    </label>
+
+    <label>
+      필요한 촉매 개수: 
+      <input id="catalystCount" type="number" value="5">
+    </label>
+
+    <p id="result"></p>
+  </div>
+
+  <script>
+    function calculate() {
+      const runePrice10 = parseFloat(document.getElementById("runePrice").value);
+      const catalystPrice = parseFloat(document.getElementById("catalystPrice").value);
+      const catalystCount = parseFloat(document.getElementById("catalystCount").value);
+
+      if (isNaN(runePrice10) || isNaN(catalystPrice) || isNaN(catalystCount)) {
+        document.getElementById("result").innerHTML = '';
+        return;
+      }
+
+      const requiredFragments = (10 * catalystPrice * catalystCount) / runePrice10;
+      const result = `강화 1회당 <strong>${Math.ceil(requiredFragments)}</strong> 파편 이상일 경우 촉매 사용 시 이득입니다.`;
+      document.getElementById("result").innerHTML = result;
+    }
+
+    document.querySelectorAll("input").forEach(input => {
+      input.addEventListener("input", calculate);
+    });
+
+    window.addEventListener("DOMContentLoaded", calculate);
+  </script>
+
+</body>
+</html>
