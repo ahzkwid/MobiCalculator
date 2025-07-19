@@ -4,8 +4,11 @@
   <meta charset="UTF-8">
   <title>강화 재연소 촉매 계산기</title>
   <style>
-    .calculator {
+    body {
       font-family: "Segoe UI", sans-serif;
+    }
+
+    .calculator {
       background-color: #fff;
       border: 1px solid #ccc;
       border-radius: 10px;
@@ -14,6 +17,7 @@
       max-width: 400px;
       margin-left: 20px;
       text-align: left;
+      position: relative;
     }
 
     .calculator h2 {
@@ -44,12 +48,84 @@
       font-size: 16px;
       color: #222;
     }
+
+    .embed-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 12px;
+      background-color: #eee;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      padding: 4px 8px;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    /* 오버레이 */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 10;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .embed-popup {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      text-align: left;
+    }
+
+    .embed-popup textarea {
+      width: 100%;
+      height: 80px;
+      font-family: monospace;
+      resize: none;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background: #f9f9f9;
+    }
+
+    .embed-popup .copy-btn {
+      margin-top: 10px;
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      background-color: #007acc;
+      color: #fff;
+      border-radius: 4px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #999;
+      cursor: pointer;
+    }
+
+    #copyNotice {
+      margin-left: 10px;
+      color: green;
+      display: none;
+    }
   </style>
 </head>
 <body>
 
   <div class="calculator">
     <h2>강화 재연소 촉매 계산기</h2>
+    <div class="embed-button" onclick="openEmbed()">퍼가기</div>
 
     <label>
       룬 파편 가격 (10개당, 원): 
@@ -69,6 +145,18 @@
     <p id="result"></p>
   </div>
 
+  <!-- 퍼가기 오버레이 -->
+  <div id="overlay" class="overlay" onclick="closeEmbed(event)">
+    <div class="embed-popup" onclick="event.stopPropagation()">
+      <div class="close-btn" onclick="closeEmbed(event)">×</div>
+      <h3>퍼가기 코드</h3>
+      <p>아래 코드를 복사해서 웹사이트에 붙여넣으세요:</p>
+      <textarea id="embedCode" readonly><iframe src="https://ahzkwid.github.io/MobiCalculator/Catalyst/" width="640" height="480" frameborder="0"></iframe></textarea>
+      <button class="copy-btn" onclick="copyEmbedCode()">복사하기</button>
+      <span id="copyNotice">복사되었습니다!</span>
+    </div>
+  </div>
+
   <script>
     function calculate() {
       const runePrice10 = parseFloat(document.getElementById("runePrice").value);
@@ -83,6 +171,24 @@
       const requiredFragments = (10 * catalystPrice * catalystCount) / runePrice10;
       const result = `강화 1회당 <strong>${Math.ceil(requiredFragments)}</strong> 파편 이상일 경우 촉매 사용 시 이득입니다.`;
       document.getElementById("result").innerHTML = result;
+    }
+
+    function openEmbed() {
+      document.getElementById("overlay").style.display = "flex";
+    }
+
+    function closeEmbed(event) {
+      document.getElementById("overlay").style.display = "none";
+    }
+
+    function copyEmbedCode() {
+      const textarea = document.getElementById("embedCode");
+      textarea.select();
+      document.execCommand("copy");
+      document.getElementById("copyNotice").style.display = "inline";
+      setTimeout(() => {
+        document.getElementById("copyNotice").style.display = "none";
+      }, 2000);
     }
 
     document.querySelectorAll("input").forEach(input => {
